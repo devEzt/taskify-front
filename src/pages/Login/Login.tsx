@@ -1,16 +1,39 @@
 import React, { useState } from 'react';
-import { Typography, TextField, Button, Link, Box } from '@material-ui/core';
-import Container from '../../components/Container';
+import {
+  Typography,
+  TextField,
+  Button,
+  Link,
+  Grid,
+  Box,
+} from '@material-ui/core';
 import { useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@material-ui/core';
+
+export const getValidToken = () => {
+  const token = localStorage.getItem('token');
+  const expiration = localStorage.getItem('token_expiration');
+  if (!token || !expiration) {
+    return null;
+  }
+  const now = new Date();
+  const expirationDate = new Date(Number(expiration));
+  if (now > expirationDate) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('token_expiration');
+    return null;
+  }
+  return token;
+};
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem('token'),
-  );
+
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [token, setToken] = useState<string | null>(getValidToken());
+  const [loading, setLoading] = useState(false);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -22,11 +45,21 @@ const LoginPage = () => {
 
   const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (email === 'test@test.com' && password === 'test') {
+    if (email === 'admin' && password === 'admin') {
       const token = 'token';
       localStorage.setItem('token', token);
+      const expirationDate = new Date();
+      expirationDate.setMinutes(expirationDate.getMinutes() + 30);
+      localStorage.setItem(
+        'token_expiration',
+        expirationDate.getTime().toString(),
+      );
       setToken(token);
-      navigate('/');
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        navigate('/');
+      }, 2000);
     } else {
       setError('Invalid email or password');
     }
@@ -37,98 +70,126 @@ const LoginPage = () => {
     setToken(null);
     navigate('/login');
   };
-
   return (
-    <Container maxWidth="xs">
-      {token ? (
+    <Grid container style={{ minHeight: '100vh' }}>
+      <Grid item xs={12} sm={6}>
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            mt: 4,
+            justifyContent: 'center',
+            height: '100%',
           }}
         >
-          <Typography component="h1" variant="h5">
-            You are logged in!
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Button
-              onClick={handleLogout}
-              fullWidth
-              variant="contained"
-              color="secondary"
+          <img src="/fundotransparente.png" alt="Taskify logo" />
+        </Box>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+          }}
+        >
+          {token ? (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                mt: 4,
+              }}
             >
-              Sair
-            </Button>
-          </Box>
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            mt: 4,
-          }}
-          component="form"
-          onSubmit={handleLogin}
-        >
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <Box sx={{ width: '100%', mt: 1 }}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={handleEmailChange}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-            <Box sx={{ mt: 2 }}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-              >
-                Sign In
-              </Button>
-            </Box>
-            {error && (
-              <Box sx={{ mt: 1 }}>
-                <Typography color="error">{error}</Typography>
+              <Typography component="h1" variant="h5">
+                You are logged in!
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                <Button
+                  onClick={handleLogout}
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                >
+                  Sair
+                </Button>
               </Box>
-            )}
-            <Box sx={{ mt: 1 }}>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
             </Box>
-          </Box>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                mt: 4,
+              }}
+              component="form"
+              onSubmit={handleLogin}
+            >
+              <Typography component="h1" variant="h5">
+                Sign in
+              </Typography>
+              <Box sx={{ width: '100%', mt: 1 }}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                <Box sx={{ mt: 2 }}>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                  >
+                    Sign In
+                  </Button>
+                </Box>
+                {loading ? (
+                  <Box
+                    sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                ) : null}
+                {error && (
+                  <Box sx={{ mt: 1 }}>
+                    <Typography color="error">{error}</Typography>
+                  </Box>
+                )}
+                <Box sx={{ mt: 1 }}>
+                  <Link href="#" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Box>
+              </Box>
+            </Box>
+          )}
         </Box>
-      )}
-    </Container>
+      </Grid>
+    </Grid>
   );
 };
-
 export default LoginPage;
