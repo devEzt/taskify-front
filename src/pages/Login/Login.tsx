@@ -70,6 +70,7 @@ const LoginPage = () => {
     setToken(null);
     navigate('/login');
   };
+
   return (
     <Grid container style={{ minHeight: '100vh' }}>
       <Grid item xs={12} sm={6}>
@@ -102,9 +103,11 @@ const LoginPage = () => {
                 mt: 4,
               }}
             >
-              <Typography component="h1" variant="h5">
-                You are logged in!
-              </Typography>
+              {loading ? (
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                  <CircularProgress />
+                </Box>
+              ) : null}
               <Box sx={{ mt: 2 }}>
                 <Button
                   onClick={handleLogout}
