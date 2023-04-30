@@ -1,5 +1,3 @@
-// src/components/ResponsiveAppBar.tsx
-
 import React, { useState } from 'react';
 import {
   AppBar,
@@ -13,10 +11,10 @@ import { Menu as MenuIcon } from '@material-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 
 const ResponsiveAppBar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleMenu = (event: any) => {
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -58,7 +56,9 @@ const ResponsiveAppBar = () => {
         <MenuItem component={RouterLink} to="/" onClick={handleClose}>
           Dashboard
         </MenuItem>
-        {/* Adicione outros links conforme necessário */}
+        <MenuItem component={RouterLink} to="/tasks" onClick={handleClose}>
+          Tasks
+        </MenuItem>
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem>
       </Menu>

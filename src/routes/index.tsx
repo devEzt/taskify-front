@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from '../pages/Home/Home';
 import LoginPage from '../pages/Login/Login';
 import { getValidToken } from '../pages/Login/Login';
+import TaskList from '../pages/Tasks/TaskList';
 
 const AppRoutes = () => {
   const token = getValidToken();
@@ -19,6 +20,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/tasks" element={<TaskList />} />
     </Routes>
   );
 };
