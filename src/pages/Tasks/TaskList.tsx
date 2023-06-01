@@ -2,12 +2,19 @@
 
 import React from 'react';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import { Box, Button } from '@material-ui/core';
+import { Box, Button, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import Subtitle from '../../components/Subtitle';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3),
+  },
   addButton: {
-    marginBottom: theme.spacing(1),
+    position: 'fixed',
+    right: theme.spacing(3),
+    bottom: theme.spacing(3),
   },
 }));
 
@@ -43,19 +50,23 @@ const TaskList: React.FC = () => {
   ];
 
   return (
-    <Box>
+    <Box className={classes.root}>
+      <Subtitle text="Task List" />
+
       <Button variant="contained" color="primary" className={classes.addButton}>
         + Nova Tarefa
       </Button>
-      <div style={{ height: 400, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          components={{
-            Toolbar: GridToolbar,
-          }}
-        />
-      </div>
+      <Paper>
+        <div style={{ height: 400, width: '100%' }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            components={{
+              Toolbar: GridToolbar,
+            }}
+          />
+        </div>
+      </Paper>
     </Box>
   );
 };
